@@ -8,7 +8,6 @@ This repository provides code for training and testing Composition Attention Gra
 
 ## Requirement
 - `python==3.8.10`
-- `poetry>=0.12`
 
 ## Installation
 ```shell
@@ -90,3 +89,9 @@ python src/estimate_word_ppl.py \
 
 ## Credits
 This repository is based on the [Pytorch implementation of RNNG](https://github.com/aistairc/rnng-pytorch) by [Noji and Oseki (2021)](https://aclanthology.org/2021.findings-acl.380/).
+
+## License
+MIT
+
+## Note
+If you want to download CAGs trained in our paper, please contact `yoshiryo0617 [at] g.ecc.u-tokyo.ac.jp`
