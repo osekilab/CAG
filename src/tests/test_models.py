@@ -197,7 +197,7 @@ class TestModels(unittest.TestCase):
             torch.cat([torch.tensor([-1]).expand(2, 2, 1), batched_actions], 2),
         )
         self.assertTensorAlmostEqual(
-            beam.num_constructed_nonterminals, torch.tensor([[0, 0], [0, 5]])
+            beam.num_consecutive_nonterminals, torch.tensor([[0, 0], [0, 5]])
         )
         self.assertTensorAlmostEqual(
             beam.num_open_parentheses, torch.tensor([[1, 1], [0, 5]])
@@ -717,7 +717,7 @@ class TestModels(unittest.TestCase):
         attrs = [
             'actions',
             'actions_pos',
-            'num_constructed_nonterminals',
+            'num_consecutive_nonterminals',
             'num_open_parentheses',
         ]
         if check_scores:

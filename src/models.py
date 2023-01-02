@@ -1019,7 +1019,7 @@ class FixedStackCompositionAttentionGrammar(nn.Module):
         ).view(1, 1, -1)
         nonterminal_mask = (
             (beam.num_open_parentheses >= self.max_open_nonterminals)
-            + (beam.num_constructed_nonterminals >= self.max_cons_nonterminals)
+            + (beam.num_consecutive_nonterminals >= self.max_cons_nonterminals)
             +
             # Check the storage of beam.actions, which is bounded beforehand.
             # Theoretically +1 seems sufficient (for rhs); extra +2 is for saving cases
@@ -1159,26 +1159,26 @@ class StackState(ExpandableStorage):
     def __init__(self, batch_size, beam_size, device):
         """
         Keep track of information about states that is strategy-dependent, including
-        num_constructed_nonterminals, for which how to update it will depend on the strategy.
+        num_consecutive_nonterminals, for which how to update it will depend on the strategy.
 
         Structures other than FixedStack preserved in BeamItems would be
         strategy-invariant.
         """
         super(StackState, self).__init__()
 
-        self.num_constructed_nonterminals = torch.zeros(
+        self.num_consecutive_nonterminals = torch.zeros(
             (batch_size, beam_size), dtype=torch.long, device=device
         )
         self.num_open_parentheses = torch.zeros(
             (batch_size, beam_size), dtype=torch.long, device=device
         )
 
-        self.attrs = ['num_constructed_nonterminals', 'num_open_parentheses']
+        self.attrs = ['num_consecutive_nonterminals', 'num_open_parentheses']
 
     def move_beams(self, self_idxs, source, source_idxs):
-        self.num_constructed_nonterminals[
+        self.num_consecutive_nonterminals[
             self_idxs
-        ] = source.num_constructed_nonterminals[source_idxs]
+        ] = source.num_consecutive_nonterminals[source_idxs]
         self.num_open_parentheses[self_idxs] = source.num_open_parentheses[source_idxs]
 
     def update_nonterminal_counts(self, actions, action_dict, action_path=None):
@@ -1190,15 +1190,15 @@ class StackState(ExpandableStorage):
             as_tuple=True
         )
 
-        self.num_constructed_nonterminals[shift_idxs] = 0
+        self.num_consecutive_nonterminals[shift_idxs] = 0
         self.num_open_parentheses[nonterminal_idxs] += 1
-        self.num_constructed_nonterminals[nonterminal_idxs] += 1
+        self.num_consecutive_nonterminals[nonterminal_idxs] += 1
         self.num_open_parentheses[reduce_idxs] -= 1
-        self.num_constructed_nonterminals[reduce_idxs] = 0
+        self.num_consecutive_nonterminals[reduce_idxs] = 0
 
     def sort_by(self, sort_idx):
-        self.num_constructed_nonterminals = torch.gather(
-            self.num_constructed_nonterminals, 1, sort_idx
+        self.num_consecutive_nonterminals = torch.gather(
+            self.num_consecutive_nonterminals, 1, sort_idx
         )
         self.num_open_parentheses = torch.gather(self.num_open_parentheses, 1, sort_idx)
 
@@ -1246,8 +1246,8 @@ class BeamItems(ExpandableStorage):
         self.attrs = ['gen_ll', 'finished']
 
     @property
-    def num_constructed_nonterminals(self):
-        return self.stack_state.num_constructed_nonterminals
+    def num_consecutive_nonterminals(self):
+        return self.stack_state.num_consecutive_nonterminals
 
     @property
     def num_open_parentheses(self):
