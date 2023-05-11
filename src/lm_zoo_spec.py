@@ -12,8 +12,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model', default='cag.pt', required=True)
 
 DEFAULT_SPEC = {
-  "name": "composition-attention-grammar",
-  "ref_url": "https://github.com/osekilab/composition-attentnion-grammar",
+  "name": "CAG",
+  "ref_url": "https://github.com/osekilab/CAG",
   "image": {
     "maintainer": "yoshiryo0617@g.ecc.u-tokyo.ac.jp",
     "version": "<image.sha1>",

@@ -11,8 +11,8 @@ This repository provides code for training and testing Composition Attention Gra
 
 ## Installation
 ```shell
-git clone https://github.com/osekilab/composition-attention-grammar.git
-cd composition-attention-grammar
+git clone https://github.com/osekilab/CAG.git
+cd CAG
 python -m venv .venv
 . .venv/bin/activate
 pip install -r requirements.txt
